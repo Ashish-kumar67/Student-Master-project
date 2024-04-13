@@ -1,9 +1,9 @@
-import React from 'react'
+import  from 'react'
 
 function StudentQueryPage() {
   return (
     <div>
-      
+      hello
     </div>
   )
 }
