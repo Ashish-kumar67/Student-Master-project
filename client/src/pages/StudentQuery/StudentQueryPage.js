@@ -1,4 +1,4 @@
-import  from 'react'
+
 
 function StudentQueryPage() {
   return (

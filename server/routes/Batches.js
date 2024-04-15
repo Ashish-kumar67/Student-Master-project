@@ -17,13 +17,13 @@ router.get("/" , async(req , res)=>{
 })
 
 
-//getting all the batches of thet course code
+//getting all the batches of that course code
 
 router.get("/course=:courseCode" , async(req , res)=>{
     const { courseCode } = req.params;
 
     try {
-        const batches = await Batches.findOne({
+        const batches = await Batches.findAll({
            
             where: {
                 courseCode:courseCode

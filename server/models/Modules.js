@@ -10,6 +10,11 @@ module.exports = (sequelize , DataTypes)=>{
         moduleCode: {
             type: DataTypes.STRING,
             allowNull: false,
+        
+        },
+        moduleUniqueCode: {
+            type: DataTypes.STRING,
+            allowNull: false,
             primaryKey: true, // Set as the primary key
             unique : true
         },

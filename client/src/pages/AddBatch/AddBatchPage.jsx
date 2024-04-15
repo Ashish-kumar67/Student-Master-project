@@ -32,6 +32,7 @@ const AddBatchPage = () => {
           `http://localhost:3001/courses/${year}/coursesBycurrentYear`
         );
         setCoursesData(response.data);
+        
       } catch (error) {
         console.error(error);
       }
@@ -46,6 +47,7 @@ const AddBatchPage = () => {
     try {
       const response = await axios.get(`http://localhost:3001/batches/course=${selectedCourseCode}`);
       setBatchesData(response.data);
+     
     } catch (error) {
       console.error(error);
     }

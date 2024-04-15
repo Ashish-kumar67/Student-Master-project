@@ -1,4 +1,4 @@
-import { useForm, useFieldArray  } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { useState } from "react";
 
 const AddCoursePage = () => {
@@ -18,41 +18,96 @@ const AddCoursePage = () => {
     name: "modules",
   });
 
-  const [moduleData , setModuleData] =useState([]); 
+  const [moduleData, setModuleData] = useState([]);
   const [isShortTerm, setIsShortTerm] = useState(false);
   const [moduleCount, setModuleCount] = useState(0);
 
+
+  const oModules = [
+    { moduleName: "Mod1", moduleCode: "Mod1", moduleUniqueCode: "" },
+    { moduleName: "Mod2", moduleCode: "Mod2", moduleUniqueCode: "" },
+    { moduleName: "Mod3", moduleCode: "Mod3", moduleUniqueCode: "" },
+    { moduleName: "Mod4", moduleCode: "Mod4", moduleUniqueCode: "" },
+    { moduleName: "Pro1", moduleCode: "Pro1", moduleUniqueCode: "" },
+  ];
+
+  const aModules = [
+    { moduleName: "Mod1", moduleCode: "Mod1", moduleUniqueCode: "" },
+    { moduleName: "Mod2", moduleCode: "Mod2", moduleUniqueCode: "" },
+    { moduleName: "Mod3", moduleCode: "Mod3", moduleUniqueCode: "" },
+    { moduleName: "Mod4", moduleCode: "Mod4", moduleUniqueCode: "" },
+    { moduleName: "Mod5", moduleCode: "Mod5", moduleUniqueCode: "" },
+    { moduleName: "Mod6", moduleCode: "Mod6", moduleUniqueCode: "" },
+    { moduleName: "Mod7", moduleCode: "Mod7", moduleUniqueCode: "" },
+    { moduleName: "Mod8", moduleCode: "Mod8", moduleUniqueCode: "" },
+    { moduleName: "Mod9", moduleCode: "Mod9", moduleUniqueCode: "" },
+    { moduleName: "Mod10", moduleCode: "Mod10", moduleUniqueCode: "" },
+    // Add more modules for course A if needed
+  ];
+
+
+
+
+
+
   const onSubmit = (data) => {
     console.log(data);
-    
+    console.log(data.courseType)
     // You can perform form submission logic here
-    setValue("courseName", ""); // Clear courseName field after form submission
-    reset();
-
-
-    // if the short term the extra data containg module and its course code
+   
+  
     if (isShortTerm) {
+      const shortTermModules = []; // Initialize empty array for short-term modules
+      // Iterate through form data to collect short-term modules
+      for (let i = 0; i < moduleCount; i++) {
+        const module = data.modules[i];
+        // Generate moduleUniqueCode based on moduleCode and courseCode
+        const moduleUniqueCode = `${module.moduleCode}${data.courseCode}`;
+        // Add module to short-term modules array with moduleUniqueCode
+        shortTermModules.push({ ...module, moduleUniqueCode });
+      }
+      // Set moduleData state with short-term modules
+      setModuleData(shortTermModules);
       const extraData = {
         courseCode: data.courseCode,
-        modules: moduleData,
+        modules: shortTermModules,
+      };
+      console.log("Extra Data:", extraData);
+    }
+     else if (data.courseType==="O" || data.courseType==="A") {
+      const courseCode = data.courseCode;
+      const defaultModules = data.courseType === "O" ? oModules : aModules;
+      defaultModules.forEach((module) => {
+        module.moduleUniqueCode = module.moduleCode + courseCode;
+      });
+     
+      setModuleData(defaultModules);
+      
+      const extraData = {
+        courseCode: data.courseCode,
+        modules: defaultModules,
       };
       console.log("Extra Data:", extraData);
     }
     setModuleCount(0);
     setIsShortTerm(false);
+    setValue("courseName", ""); // Clear courseName field after form submission
+    reset();
   };
+  
 
   const handleCourseTypeChange = (e) => {
     const value = e.target.value;
-    if (value === "O" || value === "A") {
-      setValue("courseName", value); // Set courseName field value
-      setIsShortTerm(false);
-      setModuleCount(0);
-      remove(); // Remove existing modules
-    } else if (value === "shortTerm") {
-      setValue("courseName", ""); // Clear courseName field value
-      setIsShortTerm(true);
-    }
+  if (value === "O" || value === "A") {
+    setValue("courseName", value); // Set courseName field value
+    setIsShortTerm(false);
+    setModuleCount(0);
+    remove(); // Remove existing modules
+  } else if (value === "shortTerm") {
+    setValue("courseName", ""); // Clear courseName field value
+    setIsShortTerm(true);
+    setModuleData([]); // Clear moduleData when switching to short term
+  }
   };
 
   const handleModuleCountChange = (e) => {
@@ -82,13 +137,15 @@ const AddCoursePage = () => {
 
   const saveModules = () => {
     const formData = getValues();
-     setModuleData(formData.modules)
-   
-  
+    const shortTermModules = formData.modules.map((module, index) => ({
+      ...module,
+      moduleUniqueCode: `${module.moduleCode}${formData.courseCode}${index + 1}`,
+    }));
+    setModuleData(shortTermModules);
   
     // You can perform further processing or saving of the module data here
-    
   };
+  
 
   return (
     <div className="flex items-center text-center justify-center bg-gray-800 min-h-screen">
@@ -293,9 +350,9 @@ const AddCoursePage = () => {
                             value: true,
                             message: "Module Name is required",
                           },
-                          onBlur: () => trigger(`modules[${index}].moduleName`),
+                          onBlur: () =>
+                            trigger(`modules[${index}].moduleName`),
                         })}
-                        
                         placeholder="Module Name"
                         className="w-full bg-gray-800 rounded-md border-gray-700 text-white px-2 py-1"
                         type="text"
@@ -315,14 +372,13 @@ const AddCoursePage = () => {
                         Module Code
                       </label>
                       <input
-                       {...register(`modules[${index}].moduleCode`, {
-                        required: {
-                          value: true,
-                          message: "Module Code is required",
-                        },
-                        onBlur: () => trigger(`modules[${index}].moduleCode`),
-                      })}
-                      
+                        {...register(`modules[${index}].moduleCode`, {
+                          required: {
+                            value: true,
+                            message: "Module Code is required",
+                          },
+                          onBlur: () => trigger(`modules[${index}].moduleCode`),
+                        })}
                         placeholder="Module Code"
                         className="w-full bg-gray-800 rounded-md border-gray-700 text-white px-2 py-1"
                         type="text"
