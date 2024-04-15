@@ -1,6 +1,6 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { useState } from "react";
-
+import axios from 'axios'
 const AddCoursePage = () => {
   const {
     control,
@@ -50,26 +50,26 @@ const AddCoursePage = () => {
 
 
 
-  const onSubmit = (data) => {
+  const onSubmit = async(data) => {
     console.log(data);
     console.log(data.courseType)
     // You can perform form submission logic here
-   
+   let extraData
   
     if (isShortTerm) {
       const shortTermModules = []; // Initialize empty array for short-term modules
       // Iterate through form data to collect short-term modules
       for (let i = 0; i < moduleCount; i++) {
         const module = data.modules[i];
-        // Generate moduleUniqueCode based on moduleCode and courseCode
+        // Generate moduleUniqueCode based on moduleCode and courseCode and also inserting course code
         const moduleUniqueCode = `${module.moduleCode}${data.courseCode}`;
+        const courseCode = `${data.courseCode}`;
         // Add module to short-term modules array with moduleUniqueCode
-        shortTermModules.push({ ...module, moduleUniqueCode });
+        shortTermModules.push({ ...module, moduleUniqueCode , courseCode});
       }
       // Set moduleData state with short-term modules
       setModuleData(shortTermModules);
-      const extraData = {
-        courseCode: data.courseCode,
+       extraData = {
         modules: shortTermModules,
       };
       console.log("Extra Data:", extraData);
@@ -78,21 +78,52 @@ const AddCoursePage = () => {
       const courseCode = data.courseCode;
       const defaultModules = data.courseType === "O" ? oModules : aModules;
       defaultModules.forEach((module) => {
-        module.moduleUniqueCode = module.moduleCode + courseCode;
+        module.moduleUniqueCode = module.moduleCode + courseCode; // adding unique code 
+        module.courseCode = courseCode; // adding coursecode 
       });
      
       setModuleData(defaultModules);
       
-      const extraData = {
-        courseCode: data.courseCode,
+       extraData = {
         modules: defaultModules,
       };
       console.log("Extra Data:", extraData);
     }
-    setModuleCount(0);
-    setIsShortTerm(false);
-    setValue("courseName", ""); // Clear courseName field after form submission
-    reset();
+     
+
+
+
+    try {
+      // Extracting data for course insertion
+      const courseData = {
+        courseType: data.courseType,
+        courseName: data.courseName,
+        courseCode: data.courseCode,
+        courseStartDate: data.courseStartDate,
+        courseEndDate: data.courseEndDate,
+        courseFee: data.courseFee
+      };
+
+      // Sending course data to course route
+      const courseResponse = await axios.post('http://localhost:3001/courses', courseData);
+      console.log('Course inserted:', courseResponse.data);
+
+     
+      const moduleResponse = await axios.post('http://localhost:3001/modules/createCourseModules', extraData);
+      console.log('Modules inserted:', moduleResponse.data);
+
+      // Resetting form after successful submission
+      setModuleCount(0);
+      setIsShortTerm(false);
+      setValue("courseName", "");
+      reset();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+
+
+
+    
   };
   
 

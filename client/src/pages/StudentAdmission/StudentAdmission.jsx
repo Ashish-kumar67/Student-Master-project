@@ -63,7 +63,7 @@ const StudentAdmission = () => {
 
   const onSubmit = async (data) => {
     // Calculate additional fields
-    const courseCode = data.batchCode.substring(0, 6);
+    const courseCode = data.batchCode.substring(0, 2);
     const studentRollCode = data.batchCode + data.serialNumber;
     const studentRegistrationCode = data.batchCode + data.serialNumber;
 

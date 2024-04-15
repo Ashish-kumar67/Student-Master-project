@@ -34,7 +34,7 @@ module.exports = (sequelize , DataTypes)=>{
             targetKey: 'courseCode', // Target the courseCode column
         });
         Modules.hasMany(models.Marks,{
-            foreignKey: 'moduleCode', // Use courseCode as the foreign key
+            foreignKey: 'moduleUniqueCode', // Use courseCode as the foreign key
             onDelete: "cascade",
         });
        

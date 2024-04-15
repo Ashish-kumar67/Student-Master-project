@@ -36,14 +36,20 @@ module.exports = (sequelize , DataTypes)=>{
             type:DataTypes.STRING,
             allowNull:false
         },
+        marksUniqueCode: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            primaryKey: true, // Set as the primary key
+            unique : true
+        },
 
     })
 
     
     Marks.associate = (models) => {
         Marks.belongsTo(models.Modules, {
-            foreignKey: 'moduleCode', // Reference courseCode of Courses table
-            targetKey: 'moduleCode', // Target the courseCode column
+            foreignKey: 'moduleUniqueCode', // Reference courseCode of Courses table
+            targetKey: 'moduleUniqueCode', // Target the courseCode column
         });
         Marks.belongsTo(models.Students, {
             foreignKey: 'studentRollCode', // Reference courseCode of Courses table

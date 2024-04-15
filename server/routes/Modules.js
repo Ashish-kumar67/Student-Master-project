@@ -27,4 +27,22 @@ router.post("/" , async(req , res)=>{
         res.status(500).json({ error: "Failed to create module" });
     }
 })
+
+
+// inserting all modules of a course.
+router.post("/createCourseModules", async (req, res) => {
+    const modules = req.body.modules; // Assuming req.body contains an array of modules
+    try {
+        // Insert multiple modules into the database
+        const createdModules = await Modules.bulkCreate(modules);
+        res.json(createdModules); // Respond with the created modules
+    } catch (error) {
+        console.error("Error creating modules:", error);
+        res.status(500).json({ error: "Failed to create modules" });
+    }
+});
+
+
+
+
 module.exports = router; 
