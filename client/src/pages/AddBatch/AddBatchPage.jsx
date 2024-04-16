@@ -46,7 +46,18 @@ const AddBatchPage = () => {
     setSelectedCourse(selectedCourseCode);
     try {
       const response = await axios.get(`http://localhost:3001/batches/course=${selectedCourseCode}`);
-      setBatchesData(response.data);
+      console.log(response.data.length);
+      // making batchCode value with help of number of batches present in course.
+      const batchCodeValue = `${selectedCourseCode}${response.data.length + 1}`;
+        setBatchesData(response.data); // putting batch details in table.
+
+
+        //putting batchCode according to batches in coureses
+       setValue("batchCode", batchCodeValue);
+       setNewBatch({
+        ...newBatch,
+       batchCode:batchCodeValue
+      });
      
     } catch (error) {
       console.error(error);
